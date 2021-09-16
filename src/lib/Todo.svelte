@@ -1,29 +1,27 @@
 <script>
 	import { createEventDispatcher } from 'svelte';
-
 	const dispatch = createEventDispatcher();
 	export let todo;
-	export let text = todo.text
-	console.log(todo.text)
-	console.log(text)
 </script>
 
 <div class="bg-white shadow rounded hover:border-indigo-600 my-3">
-	<div class="grid grid-cols-6" >
+	<div class="grid grid-cols-6">
 		<input
-			on:change={() => {console.log('t', text);dispatch('edit', {text})}}
+			on:change={() => {
+				dispatch('edit', { text: todo.text });
+			}}
 			type="text"
 			placeholder="To do item"
 			class="focus:outline-none focus:ring focus:border-blue-300 p-2 col-span-4"
 			class:strikethrough-text={todo.done}
-			bind:value={text}
+			bind:value={todo.text}
 		/>
 
 		<button
 			class="h-8 m-2 text-sm text-green-700 transition-colors rounded-lg hover:bg-green-100 disabled:opacity-50 disabled:cursor-not-allowed"
-			disabled='{todo.done}'
+			disabled={todo.done}
 			on:click={() => dispatch('done')}
-			data-tooltip='Mark as done'
+			data-tooltip="Mark as done"
 		>
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
@@ -41,7 +39,7 @@
 		<button
 			class="h-8 m-2 text-sm text-red-700 transition-colors rounded-lg hover:bg-red-100"
 			on:click={() => dispatch('remove')}
-			data-tooltip='Remove'
+			data-tooltip="Remove"
 		>
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
@@ -60,7 +58,7 @@
 </div>
 
 <style>
-	.strikethrough-text{
-			text-decoration: line-through;
+	.strikethrough-text {
+		text-decoration: line-through;
 	}
 </style>

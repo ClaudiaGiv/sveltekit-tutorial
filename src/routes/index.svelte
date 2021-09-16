@@ -1,24 +1,16 @@
 <script>
 	import TodoList from '../lib/TodoList.svelte';
 
-	let fqlTodos = [
-		{ id: 1, text: 'Buy milk', done: false },
-		{ id: 2, text: 'Buy bread', done: false },
-		{ id: 3, text: 'Buy water', done: false }
-	];
-
 	let gqlTodos = [
-		{ id: 1, text: 'Buy milk', done: false },
-		{ id: 2, text: 'Buy bread', done: false },
-		{ id: 3, text: 'Buy water', done: false }
+		{ _id: 1, text: 'Buy milk', done: false },
+		{ _id: 2, text: 'Buy bread', done: false },
+		{ _id: 3, text: 'Buy water', done: false }
 	];
 </script>
 
 <h1 class="text-3xl font-sans font-bold text-center py-5">To do app</h1>
 <div class="bg-gray-200 rounded rounded px-20 py-5 grid grid-cols-2 gap-20">
 	<TodoList todoList={gqlTodos} title="GQL: To do list" />
-
-	<TodoList todoList={fqlTodos} title="FQL: To do list" />
 </div>
 
 <svelte:head>

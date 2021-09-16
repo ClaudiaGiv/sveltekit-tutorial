@@ -1,29 +1,17 @@
 <script>
 	import Todo from '../lib/Todo.svelte';
-	export let todoList
-	export let title
+	export let todoList;
+	export let title;
 
 	function editTodo(index, e) {
-		console.log(index);
-
 		todoList[index].text = e.detail.text;
-		console.log(todoList);
 	}
 	function addNewTodo() {
-		console.log('add');
-
-		todoList = [...todoList, { id: todoList.length + 1, text: '', done: false }];
-		console.log(todoList);
+		todoList = [...todoList, { _id: todoList.length + 1, text: '', done: false }];
 	}
 
-	function removeTodo(index) {
-		console.log('remove');
-		console.log(index);
-		console.log(todoList);
-
-		todoList.splice(index, 1);
-		todoList = todoList;
-		console.log(todoList);
+	function removeTodo(id) {
+		todoList = todoList.filter((m) => m._id !== id);
 	}
 
 	function markAsDone(index) {
@@ -37,12 +25,9 @@
 	{#each todoList as todo, index}
 		<Todo
 			{todo}
-			on:remove={() => removeTodo(index)}
+			on:remove={() => removeTodo(todo._id)}
 			on:edit={(e) => editTodo(index, e)}
-			on:done={() => {
-					console.log('done');
-					todo.done = true;
-				}}
+			on:done={() => markAsDone(index)}
 		/>
 	{/each}
 	<button
