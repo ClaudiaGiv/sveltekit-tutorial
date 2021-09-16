@@ -23,6 +23,7 @@
 			class="h-8 m-2 text-sm text-green-700 transition-colors rounded-lg hover:bg-green-100 disabled:opacity-50 disabled:cursor-not-allowed"
 			disabled='{todo.done}'
 			on:click={() => dispatch('done')}
+			data-tooltip='Mark as done'
 		>
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
@@ -40,6 +41,7 @@
 		<button
 			class="h-8 m-2 text-sm text-red-700 transition-colors rounded-lg hover:bg-red-100"
 			on:click={() => dispatch('remove')}
+			data-tooltip='Remove'
 		>
 			<svg
 				xmlns="http://www.w3.org/2000/svg"

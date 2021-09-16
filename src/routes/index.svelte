@@ -1,28 +1,5 @@
 <script>
-	import Todo from '../lib/Todo.svelte';
-
-	function editTodo(index, e) {
-		console.log(index);
-
-		gqlTodos[index].text = e.detail.text;
-		console.log(gqlTodos);
-	}
-	function addNewTodo() {
-		console.log('add');
-
-		gqlTodos = [...gqlTodos, { id: gqlTodos.length + 1, text: '', done: false }];
-		console.log(gqlTodos);
-	}
-
-	function removeTodo(index) {
-		console.log('remove');
-		console.log(index);
-		console.log(gqlTodos);
-
-		gqlTodos.splice(index, 1);
-		gqlTodos = gqlTodos;
-		console.log(gqlTodos);
-	}
+	import TodoList from '../lib/TodoList.svelte';
 
 	let fqlTodos = [
 		{ id: 1, text: 'Buy milk', done: false },
@@ -35,63 +12,80 @@
 		{ id: 2, text: 'Buy bread', done: false },
 		{ id: 3, text: 'Buy water', done: false }
 	];
-	function markAsDone(index) {
-		fqlTodos[index].done = true;
-	}
-	$: console.log(gqlTodos);
 </script>
 
 <h1 class="text-3xl font-sans font-bold text-center py-5">To do app</h1>
 <div class="bg-gray-200 rounded rounded px-20 py-5 grid grid-cols-2 gap-20">
-	<div class=" mx-20 ">
-		<h1 class="text-2xl font-sans font-semibold text-red-600">GQL: To do</h1>
-		{#each gqlTodos as todo, index}
-			<Todo
-				{todo}
-				on:remove={() => removeTodo(index)}
-				on:edit={(e) => editTodo(index, e)}
-				on:done={() => {
-					console.log('done');
-					todo.done = true;
-				}}
-			/>
-		{/each}
-		<button
-			on:click={addNewTodo}
-			class="flex items-center mt-1 px-4 py-2 font-medium text-sm text-white bg-gray-800 rounded-md hover:bg-gray-700"
-		>
-			<svg class="h-5 w-5" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-				<path
-					d="M12 4v16m8-8H4"
-					stroke="currentColor"
-					stroke-width="2"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-				/>
-			</svg>
-			<span>Add to do</span>
-		</button>
-	</div>
+	<TodoList todoList={gqlTodos} title="GQL: To do list" />
 
-	<div class=" mx-20 ">
-		<h1 class="text-2xl font-sans font-semibold text-blue-600">FQL: To do</h1>
-		{#each fqlTodos as todo (todo.id)}
-			<Todo {todo} on:remove={() => removeTodo(todo.id)} on:edit={() => editTodo(todo.id)} />
-		{/each}
-		<button
-			on:click={addNewTodo}
-			class="flex items-center mt-1 px-4 py-2 font-medium text-sm text-white bg-gray-800 rounded-md hover:bg-gray-700"
-		>
-			<svg class="h-5 w-5" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-				<path
-					d="M12 4v16m8-8H4"
-					stroke="currentColor"
-					stroke-width="2"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-				/>
-			</svg>
-			<span>Add to do</span>
-		</button>
-	</div>
+	<TodoList todoList={fqlTodos} title="FQL: To do list" />
 </div>
+
+<svelte:head>
+	<style>
+		/*This would all go into the global.css file*/
+		[data-tooltip] {
+			position: relative;
+			z-index: 2;
+			display: block;
+		}
+
+		[data-tooltip]:before,
+		[data-tooltip]:after {
+			visibility: hidden;
+			opacity: 0;
+			pointer-events: none;
+			transition: 0.2s ease-out;
+			transform: translate(-50%, 5px);
+		}
+
+		[data-tooltip]:before {
+			position: absolute;
+			bottom: 100%;
+			left: 50%;
+			margin-bottom: 5px;
+			padding: 7px;
+			width: 100%;
+			min-width: 70px;
+			max-width: 250px;
+			-webkit-border-radius: 3px;
+			-moz-border-radius: 3px;
+			border-radius: 3px;
+			background-color: #000;
+			background-color: hsla(0, 0%, 20%, 0.9);
+			color: #fff;
+			content: attr(data-tooltip);
+			text-align: center;
+			font-size: 14px;
+			line-height: 1.2;
+			transition: 0.2s ease-out;
+		}
+
+		[data-tooltip]:after {
+			position: absolute;
+			bottom: 100%;
+			left: 50%;
+			width: 0;
+			border-top: 5px solid #000;
+			border-top: 5px solid hsla(0, 0%, 20%, 0.9);
+			border-right: 5px solid transparent;
+			border-left: 5px solid transparent;
+			content: ' ';
+			font-size: 0;
+			line-height: 0;
+		}
+
+		[data-tooltip]:hover:before,
+		[data-tooltip]:hover:after {
+			visibility: visible;
+			opacity: 1;
+			transform: translate(-50%, 0);
+		}
+
+		[data-tooltip='false']:hover:before,
+		[data-tooltip='false']:hover:after {
+			visibility: hidden;
+			opacity: 0;
+		}
+	</style>
+</svelte:head>
