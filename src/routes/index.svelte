@@ -1,16 +1,59 @@
+<script context="module">
+	const FAUNA_URL = 'https://graphql.fauna.com/graphql';
+	const FAUNA_TOKEN =
+		'Basic Zm5BRU5EYmRxLUFDQk9Iem81M0ZUUnRtdzY4LVFPUDZjU3hZbHRJUDpUb2RvQXBwOmFkbWlu';
+	const ALLTODOS_QUERY = `
+		query allTodos{
+			allTodos{
+				data{
+					_id
+					text
+					done
+				}
+			}
+		}`;
+
+	export async function load({ page, fetch }) {
+		const res = await fetch(FAUNA_URL.toString(), {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: FAUNA_TOKEN.toString()
+			},
+			body: JSON.stringify({
+				query: ALLTODOS_QUERY
+			})
+		});
+
+		if (res.ok) {
+			const allTodos = await res.json();
+			return {
+				props: {
+					allTodos: allTodos.data.allTodos.data
+				}
+			};
+		}
+		return {
+			status: res.status,
+			error: new Error()
+		};
+	}
+</script>
+
 <script>
 	import TodoList from '../lib/TodoList.svelte';
-
+	export let allTodos;
+	console.log('todoList', allTodos);
 	let gqlTodos = [
-		{ _id: 1, text: 'Buy milk', done: false },
-		{ _id: 2, text: 'Buy bread', done: false },
-		{ _id: 3, text: 'Buy water', done: false }
+		{ _id: 1, text: 'Drink milk', done: false },
+		{ _id: 2, text: 'Eat bread', done: false },
+		{ _id: 3, text: 'Drink water', done: false }
 	];
 </script>
 
 <h1 class="text-3xl font-sans font-bold text-center py-5">To do app</h1>
 <div class="bg-gray-200 rounded rounded px-20 py-5 grid grid-cols-2 gap-20">
-	<TodoList todoList={gqlTodos} title="GQL: To do list" />
+	<TodoList todoList={allTodos} title="GQL: To do list" />
 </div>
 
 <svelte:head>
