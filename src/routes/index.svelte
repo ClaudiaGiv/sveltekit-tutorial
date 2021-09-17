@@ -1,35 +1,13 @@
 <script context="module">
-	const FAUNA_URL = 'https://graphql.fauna.com/graphql';
-	const FAUNA_TOKEN =
-		'Basic Zm5BRU5EYmRxLUFDQk9Iem81M0ZUUnRtdzY4LVFPUDZjU3hZbHRJUDpUb2RvQXBwOmFkbWlu';
-	const ALLTODOS_QUERY = `
-		query allTodos{
-			allTodos{
-				data{
-					_id
-					text
-					done
-				}
-			}
-		}`;
-
 	export async function load({ page, fetch }) {
-		const res = await fetch(FAUNA_URL.toString(), {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: FAUNA_TOKEN.toString()
-			},
-			body: JSON.stringify({
-				query: ALLTODOS_QUERY
-			})
-		});
-
+		const res = await fetch('api/todo')
 		if (res.ok) {
+			console.log('res', res);
 			const allTodos = await res.json();
+			console.log('res', allTodos);
 			return {
 				props: {
-					allTodos: allTodos.data.allTodos.data
+					allTodos
 				}
 			};
 		}
