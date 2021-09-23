@@ -1,25 +1,28 @@
 <script context="module">
-	export async function load({ page, fetch }) {
-		const res = await fetch('api/todo')
+	export async function load({ fetch }) {
+		const res = await fetch('api/todo');
+		let error;
+		let status = res.status >= 400 ? res.status : 500;
 		if (res.ok) {
-			console.log('res', res);
-			const allTodos = await res.json();
-			console.log('res', allTodos);
-			return {
-				props: {
-					allTodos
-				}
-			};
+			const response = await res.json();
+			if (!response.errors)
+				return {
+					props: {
+						allTodos: response.data.allTodos.data
+					}
+				};
+			error = JSON.stringify(response.errors);
 		}
 		return {
-			status: res.status,
-			error: new Error()
+			status,
+			error: error || 'Request error'
 		};
 	}
 </script>
 
 <script>
 	import TodoList from '../lib/TodoList.svelte';
+
 	export let allTodos;
 	console.log('todoList', allTodos);
 	let gqlTodos = [
@@ -27,11 +30,35 @@
 		{ _id: 2, text: 'Eat bread', done: false },
 		{ _id: 3, text: 'Drink water', done: false }
 	];
+
+	function editTodo(e) {
+		let todo = e.detail;
+		if (todo._id === undefined) {
+			createTodo(todo);
+		}
+	}
+
+	async function createTodo(todo) {
+		const res = await fetch('api/todo', {
+			method: 'POST',
+			body: JSON.stringify(todo)
+		});
+		let error;
+		if (res.ok) {
+			const response = await res.json();
+			if (!response.errors) {
+				allTodos = [...allTodos, response.data.createTodo.data];
+				return;
+			}
+			error = JSON.stringify(response.errors);
+		}
+		console.log(error || res.statusText);
+	}
 </script>
 
 <h1 class="text-3xl font-sans font-bold text-center py-5">To do app</h1>
 <div class="bg-gray-200 rounded rounded px-20 py-5 grid grid-cols-2 gap-20">
-	<TodoList todoList={allTodos} title="GQL: To do list" />
+	<TodoList todoList={allTodos} on:edit={editTodo} title="GQL: To do list" />
 </div>
 
 <svelte:head>

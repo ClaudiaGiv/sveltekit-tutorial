@@ -1,8 +1,8 @@
-type ToDo {
-    text: String
-    done: Boolean
+type Todo {
+	text: String
+	done: Boolean
 }
 
 type Query {
-    allTodos: [ToDo]
+	allTodos: [Todo]
 }

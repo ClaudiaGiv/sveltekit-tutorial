@@ -1,13 +1,17 @@
 <script>
+	import { createEventDispatcher } from 'svelte';
 	import Todo from '../lib/Todo.svelte';
+
+	const dispatch = createEventDispatcher();
 	export let todoList;
 	export let title;
 
 	function editTodo(index, e) {
 		todoList[index].text = e.detail.text;
+		dispatch('edit', todoList[index]);
 	}
 	function addNewTodo() {
-		todoList = [...todoList, { _id: todoList.length + 1, text: '', done: false }];
+		todoList = [...todoList, { text: '', done: false }];
 	}
 
 	function removeTodo(id) {
