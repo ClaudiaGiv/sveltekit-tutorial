@@ -73,3 +73,37 @@ export async function post(req) {
 		error: new Error()
 	};
 }
+
+export async function del(req) {
+	let variables = JSON.parse(req.body);
+
+	const DELTETODO_MUTATION = `
+		mutation deleteTodo($id: ID!) {
+			deleteTodo(id:$id){
+				_id
+				text
+				done
+			}
+		}`;
+	const res = await fetch(FAUNA_URL.toString(), {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: FAUNA_TOKEN.toString()
+		},
+		body: JSON.stringify({
+			query: DELTETODO_MUTATION,
+			variables
+		})
+	});
+
+	if (res.ok) {
+		return {
+			body: await res.json()
+		};
+	}
+	return {
+		status: res.status,
+		error: new Error()
+	};
+}

@@ -15,13 +15,14 @@
 	}
 
 	function removeTodo(id) {
-		todoList = todoList.filter((m) => m._id !== id);
+		// todoList = todoList.filter((m) => m._id !== id);
+		dispatch('remove', id);
 	}
 
 	function markAsDone(index) {
 		todoList[index].done = true;
 	}
-	$: console.log(todoList);
+	// $: console.log(todoList);
 </script>
 
 <div class=" mx-20 ">

@@ -5,6 +5,7 @@
 		let status = res.status >= 400 ? res.status : 500;
 		if (res.ok) {
 			const response = await res.json();
+			// console.log("response", response)
 			if (!response.errors)
 				return {
 					props: {
@@ -24,7 +25,7 @@
 	import TodoList from '../lib/TodoList.svelte';
 
 	export let allTodos;
-	console.log('todoList', allTodos);
+	// console.log('todoList', allTodos);
 	let gqlTodos = [
 		{ _id: 1, text: 'Drink milk', done: false },
 		{ _id: 2, text: 'Eat bread', done: false },
@@ -38,6 +39,24 @@
 		}
 	}
 
+	async function removeTodo(e) {
+		const res = await fetch('api/todo', {
+			method: 'DELETE',
+			body: JSON.stringify({ id: e.detail })
+		});
+		let error;
+		if (res.ok) {
+			const response = await res.json();
+			console.log(response);
+			if (!response.errors) {
+				allTodos = allTodos.filter((m) => m._id !== e.detail);
+				return;
+			}
+			error = JSON.stringify(response.errors);
+		}
+		console.log(error || res.statusText);
+	}
+
 	async function createTodo(todo) {
 		const res = await fetch('api/todo', {
 			method: 'POST',
@@ -47,18 +66,20 @@
 		if (res.ok) {
 			const response = await res.json();
 			if (!response.errors) {
-				allTodos = [...allTodos, response.data.createTodo.data];
+				allTodos = [...allTodos, response.data.createTodo];
+				console.log("alltodos", allTodos)
 				return;
 			}
 			error = JSON.stringify(response.errors);
 		}
+		allTodos = allTodos
 		console.log(error || res.statusText);
 	}
 </script>
 
 <h1 class="text-3xl font-sans font-bold text-center py-5">To do app</h1>
 <div class="bg-gray-200 rounded rounded px-20 py-5 grid grid-cols-2 gap-20">
-	<TodoList todoList={allTodos} on:edit={editTodo} title="GQL: To do list" />
+	<TodoList todoList={allTodos} on:edit={editTodo} on:remove={removeTodo} title="GQL: To do list" />
 </div>
 
 <svelte:head>
