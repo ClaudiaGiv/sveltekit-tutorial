@@ -74,6 +74,47 @@ export async function post(req) {
 	};
 }
 
+export async function put(req) {
+	let variables = JSON.parse(req.body);
+	console.log("PUT variables", variables)
+	const UPDATEETODO_MUTATION = `
+		mutation updateTodo($_id: ID!, $text: String!, $done: Boolean!){
+			updateTodo(
+				id: $_id,
+				data: {
+					text: $text
+					done: $done
+				}
+			)
+			{
+					_id
+					text
+					done
+			}
+		}`;
+	const res = await fetch(FAUNA_URL.toString(), {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: FAUNA_TOKEN.toString()
+		},
+		body: JSON.stringify({
+			query: UPDATEETODO_MUTATION,
+			variables
+		})
+	});
+
+	if (res.ok) {
+		return {
+			body: await res.json()
+		};
+	}
+	return {
+		status: res.status,
+		error: new Error()
+	};
+}
+
 export async function del(req) {
 	let variables = JSON.parse(req.body);
 

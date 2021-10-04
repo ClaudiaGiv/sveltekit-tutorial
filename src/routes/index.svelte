@@ -25,7 +25,7 @@
 	import TodoList from '../lib/TodoList.svelte';
 
 	export let allTodos;
-	// console.log('todoList', allTodos);
+	console.log('todoList', allTodos);
 	let gqlTodos = [
 		{ _id: 1, text: 'Drink milk', done: false },
 		{ _id: 2, text: 'Eat bread', done: false },
@@ -37,6 +37,29 @@
 		if (todo._id === undefined) {
 			createTodo(todo);
 		}
+		else{
+			updateTodo(todo)
+		}
+	}
+
+	async function updateTodo(todo) {
+		const res = await fetch('api/todo', {
+			method: 'PUT',
+			body: JSON.stringify(todo)
+		});
+		let error;
+		if (res.ok) {
+			const response = await res.json();
+			if (!response.errors) {
+				const index = allTodos.findIndex((c) => c._id === todo._id);
+				allTodos[index] = response.data.updateTodo
+				console.log("alltodos", allTodos)
+				return;
+			}
+			error = JSON.stringify(response.errors);
+		}
+		allTodos = allTodos
+		console.log(error || res.statusText);
 	}
 
 	async function removeTodo(e) {
@@ -75,6 +98,7 @@
 		allTodos = allTodos
 		console.log(error || res.statusText);
 	}
+
 </script>
 
 <h1 class="text-3xl font-sans font-bold text-center py-5">To do app</h1>

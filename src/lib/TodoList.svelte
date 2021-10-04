@@ -21,6 +21,7 @@
 
 	function markAsDone(index) {
 		todoList[index].done = true;
+		dispatch('edit', todoList[index]);
 	}
 	// $: console.log(todoList);
 </script>
